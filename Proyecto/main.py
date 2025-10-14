@@ -240,3 +240,25 @@ while True:
                     if placa_formateada:
                         placa_detectada = placa_formateada
                         Ctexto = placa_detectada
+                        factura_generada = False
+                        hora_ingreso = datetime.now()
+                        modo_operacion = "salida" if placa_detectada in registro_vehiculos else "ingreso"
+
+                # Advertencia si falla el OCR
+                if not placa_detectada and mejor_placa is not None: # Verifica que haya un contorno detectado
+                    advertencia = np.zeros((200, 600, 3), dtype=np.uint8)
+                    cv2.putText(advertencia, "Mantenga el vehiculo quieto", (100, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                    cv2.putText(advertencia, "para reconocer su placa", (100, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
+
+                    mostrar_ventana_temporal("Advertencia", advertencia, duracion=5)
+                    estado_advertencia = "espera"
+                    tiempo_inicio_evento = datetime.now()
+                    deteccion_activa = False
+
+    # Mostrar placa detectada
+    cv2.rectangle(frame, (870, 750), (1070, 850), (8, 0, 0), cv2.FILLED)
+    cv2.putText(frame, Ctexto, (880, 810), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 8), 2)
+
+    # Procesar ingreso 
+    if placa_detectada and not factura_generada and modo_operacion == "ingreso":
+        tipo = usuarios.get(placa_detectada, {"tipo": "visitante"})["tipo"]
