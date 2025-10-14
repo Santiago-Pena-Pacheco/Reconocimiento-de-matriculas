@@ -305,4 +305,26 @@ while True:
             cv2.putText(salida_frame, f"La placa {placa_detectada}", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
             cv2.putText(salida_frame, f"salio a las {hora_salida.strftime('%H:%M:%S')}", (50, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
             cv2.putText(salida_frame, f"Tiempo total: {str(tiempo).split('.')[0]}", (50, 180), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+            
+            mostrar_ventana_temporal("Salida de Vehiculo", salida_frame, duracion=5)
+
+            plazas_frame_salida = np.zeros((200, 600, 3), dtype=np.uint8)
+            cv2.putText(plazas_frame_salida, f"Plazas disponibles para {tipo}: {plazas[tipo]['disponibles']}", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
+
+            estado_salida = "salida"
+            tiempo_inicio_evento = datetime.now()
+            deteccion_activa = False
+            factura_generada = True
+            placa_en_proceso = None
+            placa_detectada = ""
+        else:
+            advertencia = np.zeros((200, 600, 3), dtype=np.uint8)
+            cv2.putText(advertencia, "PLACA NO REGISTRADA", (100, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(advertencia, "Contacte a seguridad", (100, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
+            
+            mostrar_ventana_temporal("Advertencia", advertencia, duracion=5)
+            estado_advertencia = "espera"
+            tiempo_inicio_evento = datetime.now()
+            deteccion_activa = False
+            factura_generada = True 
 
