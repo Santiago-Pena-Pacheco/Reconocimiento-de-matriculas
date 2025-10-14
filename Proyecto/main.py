@@ -219,5 +219,24 @@ while True:
                     texto = pytesseract.image_to_string(bin_img, config=config_ocr)
                     texto = texto.strip().upper().replace("\n", "").replace(" ", "")
 
+                    # Formatear el texto crudo del OCR para validación
+                    placa_cruda = texto.strip().upper().replace(" ", "")
+                    
+                    placa_detectada = ""
+                    placa_formateada = ""
 
-
+                    # Patrón para carro: (3 letras, 3 números)
+                    patron_carro = re.compile(r'^[A-Z]{3}[0-9]{3}$')
+                    # Patrón para moto: (3 letras, 2 números, 1 letra)
+                    patron_moto = re.compile(r'^[A-Z]{3}[0-9]{2}[A-Z]{1}$')
+                    
+                    if len(placa_cruda) == 6:
+                        if patron_carro.match(placa_cruda):
+                            placa_formateada = f"{placa_cruda[:3]} {placa_cruda[3:]}"
+                        elif patron_moto.match(placa_cruda):
+                            # Formato de moto:
+                            placa_formateada = f"{placa_cruda[:3]} {placa_cruda[3:]}"
+                    
+                    if placa_formateada:
+                        placa_detectada = placa_formateada
+                        Ctexto = placa_detectada
