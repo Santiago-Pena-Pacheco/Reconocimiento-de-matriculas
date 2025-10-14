@@ -86,7 +86,7 @@ def actualizar_ventanas_temporales():
         else:
             if datos["mostrada"]:
                 ventanas_a_cerrar.append(nombre)
-for nombre in ventanas_a_cerrar:
+    for nombre in ventanas_a_cerrar:
         cv2.destroyWindow(nombre)
         del ventanas_temporales[nombre]
 
@@ -173,3 +173,4 @@ gris = cv2.cvtColor(recorte, cv2.COLOR_BGR2GRAY)
 
             # Ajuste en rango de área y búsqueda del contorno con mayor área dentro de los parámetros
             if 1000 < area < 30000 and area > mejor_area:
+
