@@ -153,7 +153,7 @@ while True:
 
         # Detecccion de placa con filtro De escala de grises
 
-gris = cv2.cvtColor(recorte, cv2.COLOR_BGR2GRAY)
+        gris = cv2.cvtColor(recorte, cv2.COLOR_BGR2GRAY)
         suavizado = cv2.GaussianBlur(gris, (5, 5), 0)
 
         bordes_canny = cv2.Canny(suavizado, 100, 200)
@@ -196,5 +196,6 @@ gris = cv2.cvtColor(recorte, cv2.COLOR_BGR2GRAY)
 
             # Asegurar que el recorte de la placa es válido antes de OCR (Reconocimiento optico de caracteres)
             if y >= 0 and y + h <= recorte.shape[0] and x >= 0 and x + w <= recorte.shape[1]:
+
 
 
