@@ -283,4 +283,26 @@ while True:
                 cv2.putText(lleno_frame, "PLAZAS LLENAS", (150, 100), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 255), 3)
                 cv2.putText(lleno_frame, "VUELVA MAS TARDE", (150, 150), cv2.FONT_HERSHEY_SIMPLEX, 1.1, (0, 255, 255), 3)
                 
+                mostrar_ventana_temporal("Estado de Parqueadero", lleno_frame, duracion=5)
+                estado_lleno = "lleno"
+                tiempo_inicio_evento = datetime.now()
+                deteccion_activa = False
+                factura_generada = True
+
+    # Procesar salida (se mantiene igual)
+    if placa_detectada and not factura_generada and modo_operacion == "salida":
+        if placa_detectada in registro_vehiculos:
+            hora_salida = datetime.now()
+            hora_ingreso = registro_vehiculos[placa_detectada]["ingreso"]
+            tiempo = hora_salida - hora_ingreso
+            tipo = usuarios.get(placa_detectada, {"tipo": "visitante"})["tipo"] 
+            
+            plazas[tipo]["disponibles"] += 1
+            del registro_vehiculos[placa_detectada]
+
+            salida_frame = np.zeros((200, 600, 3), dtype=np.uint8)
+            cv2.putText(salida_frame, "Salida autorizada", (50, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
+            cv2.putText(salida_frame, f"La placa {placa_detectada}", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
+            cv2.putText(salida_frame, f"salio a las {hora_salida.strftime('%H:%M:%S')}", (50, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
+            cv2.putText(salida_frame, f"Tiempo total: {str(tiempo).split('.')[0]}", (50, 180), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
 
