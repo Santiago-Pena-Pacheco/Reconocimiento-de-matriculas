@@ -261,7 +261,7 @@ while True:
     # Procesar ingreso 
     if placa_detectada and not factura_generada and modo_operacion == "ingreso":
         tipo = usuarios.get(placa_detectada, {"tipo": "visitante"})["tipo"]
-                        if placa_detectada not in usuarios:
+        if placa_detectada not in usuarios:
             usuarios[placa_detectada] = {"nombre": "Visitante", "cedula": "N/A", "tipo": tipo}
 
         # Aumenta o disminuye las plazas
@@ -349,3 +349,4 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
+
