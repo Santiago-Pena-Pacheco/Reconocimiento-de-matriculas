@@ -108,3 +108,26 @@ while True:
     if not deteccion_activa:
         if estado_evento and (ahora - tiempo_inicio_evento).total_seconds() >= 5:
             if estado_evento == "bienvenida" and factura_frame is not None:
+                estado_evento = "factura"
+                tiempo_inicio_evento = ahora
+                mostrar_ventana_temporal("Factura de Ingreso", factura_frame, duracion=5)
+
+            elif estado_evento == "factura" and plazas_frame is not None:
+                estado_evento = "plazas"
+                tiempo_inicio_evento = ahora
+                mostrar_ventana_temporal("Plazas Disponibles", plazas_frame, duracion=5)
+
+            elif estado_evento == "plazas":
+                estado_evento = None
+                deteccion_activa = True
+                factura_generada = True
+                placa_detectada = ""
+
+        # Control de eventos temporales (Secuencia de ventanas en la SALIDA)
+        elif estado_salida == "salida" and (ahora - tiempo_inicio_evento).total_seconds() >= 5 and plazas_frame_salida is not None:
+            mostrar_ventana_temporal("Plazas tras salida", plazas_frame_salida, duracion=5)
+            estado_salida = "plazas_salida"
+            tiempo_inicio_evento = ahora
+
+        elif estado_salida == "plazas_salida" and (ahora - tiempo_inicio_evento).total_seconds() >= 5:
+
