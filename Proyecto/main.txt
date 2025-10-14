@@ -1,0 +1,22 @@
+import cv2
+import numpy as np
+import pytesseract
+from PIL import Image
+from datetime import datetime
+import re
+
+# Usuarios registrados
+usuarios = {
+    "ABC 123": {"nombre": "Carlos PLazas", "cedula": "123456789", "tipo": "profesor"},
+    "DEF 234": {"nombre": "German Mendez", "cedula": "234567891", "tipo": "profesor"},
+    "MNO 321": {"nombre": "Pedro Forero", "cedula": "321456789", "tipo": "profesor"},
+    "VWX 159": {"nombre": "Carlos Piña", "cedula": "159753486", "tipo": "profesor"},
+    "EFG 951": {"nombre": "Daniel Castro", "cedula": "951357486", "tipo": "profesor"},
+    "NOP 258": {"nombre": "Mauricio Moncada", "cedula": "258147369", "tipo": "profesor"},
+    "WXY 654": {"nombre": "Oscar Medina", "cedula": "654321987", "tipo": "profesor"},
+    "FGH 258": {"nombre": "Sandra Leon", "cedula": "258963741", "tipo": "profesor"},
+    "PQS 654": {"nombre": "Hector Beltran", "cedula": "654987321", "tipo": "profesor"},
+    "XYZ 258": {"nombre": "Carolina Nieto", "cedula": "258741963", "tipo": "profesor"},
+    "XYZ 789": {"nombre": "Ana Gomez", "cedula": "987654321", "tipo": "estudiante"},
+    "GHI 567": {"nombre": "Mateo Roberto", "cedula": "567891234", "tipo": "estudiante"},
+    "PQR 654": {"nombre": "Laura Torres", "cedula": "654789123", "tipo": "estudiante"},
