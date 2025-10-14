@@ -327,4 +327,15 @@ while True:
             tiempo_inicio_evento = datetime.now()
             deteccion_activa = False
             factura_generada = True 
+            placa_detectada = ""
+
+    # Actualizar ventanas y mostrar cámara
+    actualizar_ventanas_temporales()
+    cv2.imshow("Camara - Deteccion de Placa", frame)
+
+    if cv2.waitKey(1) == 27:
+        break
+
+cap.release()
+cv2.destroyAllWindows()
 
