@@ -20,7 +20,7 @@ usuarios = {
     "XYZ 789": {"nombre": "Ana Gomez", "cedula": "987654321", "tipo": "estudiante"},
     "GHI 567": {"nombre": "Mateo Roberto", "cedula": "567891234", "tipo": "estudiante"},
     "PQR 654": {"nombre": "Laura Torres", "cedula": "654789123", "tipo": "estudiante"},
-"YZA 753": {"nombre": "Miguel Herrera", "cedula": "753951486", "tipo": "estudiante"},
+    "YZA 753": {"nombre": "Miguel Herrera", "cedula": "753951486", "tipo": "estudiante"},
     "HIJ 147": {"nombre": "Valentina Lopez", "cedula": "147258369", "tipo": "estudiante"},
     "QRS 741": {"nombre": "Fernando Rios", "cedula": "741852963", "tipo": "estudiante"},
     "ZAB 147": {"nombre": "Natalia Vargas", "cedula": "147369258", "tipo": "estudiante"},
@@ -40,3 +40,28 @@ usuarios = {
     "MOT 12A": {"nombre": "Nicolas Copernico", "cedula": "777888999", "tipo": "estudiante"},
     "CYC 50B": {"nombre": "Elena Nito", "cedula": "111222333", "tipo": "profesor"},
     "RUT 99Z": {"nombre": "Javier Rueda", "cedula": "444555666", "tipo": "estudiante"},
+}
+
+plazas = {
+    "profesor": {"disponibles": 10, "tarifa": 2500},
+    "estudiante": {"disponibles": 20, "tarifa": 5000},
+    "visitante": {"disponibles": 10, "tarifa": 15000}
+}
+
+registro_vehiculos = {}
+
+# Variables de control
+placa_detectada = ""
+placa_en_proceso = None
+factura_generada = False
+hora_ingreso = None
+modo_operacion = None
+estado_evento = None
+estado_salida = None
+estado_lleno = None
+estado_advertencia = None
+tiempo_inicio_evento = None
+deteccion_activa = True
+ventanas_temporales = {}
+Ctexto = ""
+
