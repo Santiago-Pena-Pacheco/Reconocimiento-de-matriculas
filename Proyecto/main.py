@@ -196,6 +196,28 @@ while True:
 
             # Asegurar que el recorte de la placa es válido antes de OCR (Reconocimiento optico de caracteres)
             if y >= 0 and y + h <= recorte.shape[0] and x >= 0 and x + w <= recorte.shape[1]:
+                placa_recortada = recorte[y:y + h, x:x + w]
+
+                gris_placa = cv2.cvtColor(placa_recortada, cv2.COLOR_BGR2GRAY)
+
+                binarizada = cv2.adaptiveThreshold(gris_placa, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                                     cv2.THRESH_BINARY, 11, 2)
+
+                if np.mean(binarizada) < 127:
+                    binarizada = 255 - binarizada
+
+                #Registra la deteccion al final del reconocimiento 
+                #cv2.imshow("Imagen Binarizada", binarizada) 
+
+                # Preparar y pasar a Tesseract
+                bin_img = Image.fromarray(binarizada).convert("L")
+
+                alp, anp = binarizada.shape
+                if alp >= 20 and anp >= 50:
+                    # psm8 detecta toda la fila de caracteres
+                    config_ocr = "--psm 8 -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+                    texto = pytesseract.image_to_string(bin_img, config=config_ocr)
+                    texto = texto.strip().upper().replace("\n", "").replace(" ", "")
 
 
 
