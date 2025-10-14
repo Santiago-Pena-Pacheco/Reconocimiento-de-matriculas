@@ -86,3 +86,25 @@ def actualizar_ventanas_temporales():
         else:
             if datos["mostrada"]:
                 ventanas_a_cerrar.append(nombre)
+for nombre in ventanas_a_cerrar:
+        cv2.destroyWindow(nombre)
+        del ventanas_temporales[nombre]
+
+# ruta a la aplicacion tesseract
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
+# Con 0 para camara por defecto y 1 para camara complementaria
+cap = cv2.VideoCapture(1)
+
+# Proceso de reconoconocimiento hasta oprimir ESC
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    ahora = datetime.now()
+
+    # Control de eventos temporales (Secuencia de ventanas en el INGRESO)
+    if not deteccion_activa:
+        if estado_evento and (ahora - tiempo_inicio_evento).total_seconds() >= 5:
+            if estado_evento == "bienvenida" and factura_frame is not None:
