@@ -262,3 +262,25 @@ while True:
     # Procesar ingreso 
     if placa_detectada and not factura_generada and modo_operacion == "ingreso":
         tipo = usuarios.get(placa_detectada, {"tipo": "visitante"})["tipo"]
+                cv2.putText(factura_frame, f"Hora ingreso: {hora}", (20, 300), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+
+                plazas_frame = np.zeros((200, 600, 3), dtype=np.uint8)
+                cv2.putText(plazas_frame, f"Plazas disponibles para {tipo}: {plazas[tipo]['disponibles']}", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
+
+                acceso_frame = np.zeros((200, 600, 3), dtype=np.uint8)
+                cv2.putText(acceso_frame, "Acceso autorizado", (50, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
+                cv2.putText(acceso_frame, "Bienvenido al parqueadero", (50, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+                
+                mostrar_ventana_temporal("Barrera de Ingreso", acceso_frame, duracion=5) 
+                
+                deteccion_activa = False
+                estado_evento = "bienvenida"
+                tiempo_inicio_evento = datetime.now()
+                registro_vehiculos[placa_detectada] = {"ingreso": hora_ingreso}
+                placa_en_proceso = placa_detectada
+            else:
+                lleno_frame = np.zeros((200, 600, 3), dtype=np.uint8)
+                cv2.putText(lleno_frame, "PLAZAS LLENAS", (150, 100), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 255), 3)
+                cv2.putText(lleno_frame, "VUELVA MAS TARDE", (150, 150), cv2.FONT_HERSHEY_SIMPLEX, 1.1, (0, 255, 255), 3)
+                
+
