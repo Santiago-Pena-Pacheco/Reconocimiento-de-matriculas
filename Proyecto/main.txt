@@ -153,3 +153,23 @@ while True:
 
         # Detecccion de placa con filtro De escala de grises
 
+gris = cv2.cvtColor(recorte, cv2.COLOR_BGR2GRAY)
+        suavizado = cv2.GaussianBlur(gris, (5, 5), 0)
+
+        bordes_canny = cv2.Canny(suavizado, 100, 200)
+        bordes_canny = cv2.dilate(bordes_canny, None, iterations=1)
+
+        # ventana con Reconocimiento en tiempo real
+        cv2.imshow("Bordes De La Placa en tiempo real", bordes_canny)
+
+        contornos, _ = cv2.findContours(bordes_canny, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+
+        mejor_placa = None
+        mejor_area = 0 # Con 0 para buscar el contorno más grande que cumpla
+
+        # Filtrado y procesamiento de contornos
+        for contorno in contornos:
+            area = cv2.contourArea(contorno)
+
+            # Ajuste en rango de área y búsqueda del contorno con mayor área dentro de los parámetros
+            if 1000 < area < 30000 and area > mejor_area:
