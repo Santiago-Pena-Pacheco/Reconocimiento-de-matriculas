@@ -174,3 +174,27 @@ gris = cv2.cvtColor(recorte, cv2.COLOR_BGR2GRAY)
             # Ajuste en rango de área y búsqueda del contorno con mayor área dentro de los parámetros
             if 1000 < area < 30000 and area > mejor_area:
 
+                x, y, w, h = cv2.boundingRect(contorno)
+                aspect_ratio = w / h
+
+                if 2.0 < aspect_ratio < 5.5:
+
+                    perimetro = cv2.arcLength(contorno, True)
+                    approx = cv2.approxPolyDP(contorno, 0.04 * perimetro, True)
+
+                    # El contorno debe ser rectangular (4 vértices)
+                    if len(approx) == 4:
+                        mejor_placa = (x, y, w, h)
+                        mejor_area = area # Se actualiza para buscar un contorno aún mejor
+
+        # Procesar el mejor contorno encontrado
+        if mejor_placa is not None:
+            x, y, w, h = mejor_placa
+
+            # recuadro cian (255, 255, 0) sobre el recorte, usando las coordenadas relativas (x, y, w, h)
+            cv2.rectangle(recorte, (x, y), (x + w, y + h), (255, 255, 0), 2)  # Cian
+
+            # Asegurar que el recorte de la placa es válido antes de OCR (Reconocimiento optico de caracteres)
+            if y >= 0 and y + h <= recorte.shape[0] and x >= 0 and x + w <= recorte.shape[1]:
+
+
