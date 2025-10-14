@@ -130,4 +130,26 @@ while True:
             tiempo_inicio_evento = ahora
 
         elif estado_salida == "plazas_salida" and (ahora - tiempo_inicio_evento).total_seconds() >= 5:
+            estado_salida = None
+            deteccion_activa = True
+
+        # Control de eventos temporales (Lleno o Advertencia)
+        elif estado_lleno == "lleno" and (ahora - tiempo_inicio_evento).total_seconds() >= 5:
+            estado_lleno = None
+            deteccion_activa = True
+
+        elif estado_advertencia == "espera" and (ahora - tiempo_inicio_evento).total_seconds() >= 5:
+            estado_advertencia = None
+            deteccion_activa = True
+
+    if deteccion_activa:
+        alto, ancho, _ = frame.shape
+        x1, x2 = int(ancho / 3), int(ancho * 2 / 3)
+        y1, y2 = int(alto / 3), int(alto * 2 / 3)
+
+        # Recuadro verde para el área de interés
+        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        recorte = frame[y1:y2, x1:x2]
+
+        # Detecccion de placa con filtro De escala de grises
 
