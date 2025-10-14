@@ -20,9 +20,9 @@ usuarios = {
     "XYZ 789": {"nombre": "Ana Gomez", "cedula": "987654321", "tipo": "estudiante"},
     "GHI 567": {"nombre": "Mateo Roberto", "cedula": "567891234", "tipo": "estudiante"},
     "PQR 654": {"nombre": "Laura Torres", "cedula": "654789123", "tipo": "estudiante"},
-    "YZA 753": {"nombre": "Miguel Herrera", "cedula": "753951486", "tipo": "estudiante"},
-    "HIJ 147": {"nombre": "Valentina Lopez", "cedula": "147258369", "tipo": "estudiante"},
-    "QRS 741": {"nombre": "Fernando Rios", "cedula": "741852963", "tipo": "estudiante"},
+    "YZA 753": {"nombre": "Pablo Montoya", "cedula": "753951486", "tipo": "estudiante"},
+    "HIJ 147": {"nombre": "Pablo Carreño", "cedula": "147258369", "tipo": "estudiante"},
+    "QRS 741": {"nombre": "steven stiqui", "cedula": "741852963", "tipo": "estudiante"},
     "ZAB 147": {"nombre": "Natalia Vargas", "cedula": "147369258", "tipo": "estudiante"},
     "IJK 741": {"nombre": "Esteban Cruz", "cedula": "741963852", "tipo": "estudiante"},
     "RTU 147": {"nombre": "Monica Reyes", "cedula": "147852369", "tipo": "estudiante"},
@@ -200,8 +200,7 @@ while True:
 
                 gris_placa = cv2.cvtColor(placa_recortada, cv2.COLOR_BGR2GRAY)
 
-                binarizada = cv2.adaptiveThreshold(gris_placa, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                                     cv2.THRESH_BINARY, 11, 2)
+                binarizada = cv2.adaptiveThreshold(gris_placa, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 11, 2)
 
                 if np.mean(binarizada) < 127:
                     binarizada = 255 - binarizada
@@ -262,50 +261,73 @@ while True:
     # Procesar ingreso 
     if placa_detectada and not factura_generada and modo_operacion == "ingreso":
         tipo = usuarios.get(placa_detectada, {"tipo": "visitante"})["tipo"]
+                        if placa_detectada not in usuarios:
+            usuarios[placa_detectada] = {"nombre": "Visitante", "cedula": "N/A", "tipo": tipo}
+
+        # Aumenta o disminuye las plazas
+        if placa_detectada not in registro_vehiculos:
+            if plazas[tipo]["disponibles"] > 0:
+                plazas[tipo]["disponibles"] -= 1
+                tarifa = plazas[tipo]["tarifa"]
+                fecha = hora_ingreso.strftime("%d/%m/%Y")
+                hora = hora_ingreso.strftime("%H:%M:%S")
+
+                # Ventana facuracion
+                factura_frame = np.zeros((450, 600, 3), dtype=np.uint8)
+                cv2.putText(factura_frame, "FACTURA", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 200, 0), 3)
+                cv2.putText(factura_frame, f"Bienvenido {usuarios[placa_detectada]['nombre']}", (20, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+                cv2.putText(factura_frame, f"Placa: {placa_detectada}", (20, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+                cv2.putText(factura_frame, f"Tipo: {tipo}", (20, 180), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+                cv2.putText(factura_frame, f"Tarifa: ${tarifa}", (20, 220), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+                cv2.putText(factura_frame, f"Fecha: {fecha}", (20, 260), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
                 cv2.putText(factura_frame, f"Hora ingreso: {hora}", (20, 300), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
 
+                # Ventana Plazas disponibles
                 plazas_frame = np.zeros((200, 600, 3), dtype=np.uint8)
                 cv2.putText(plazas_frame, f"Plazas disponibles para {tipo}: {plazas[tipo]['disponibles']}", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
-
+                
+                # Ventana de bienvenida 
                 acceso_frame = np.zeros((200, 600, 3), dtype=np.uint8)
                 cv2.putText(acceso_frame, "Acceso autorizado", (50, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
                 cv2.putText(acceso_frame, "Bienvenido al parqueadero", (50, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
-                
-                mostrar_ventana_temporal("Barrera de Ingreso", acceso_frame, duracion=5) 
-                
+
+                mostrar_ventana_temporal("Barrera de Ingreso", acceso_frame, duracion=5)
+
                 deteccion_activa = False
                 estado_evento = "bienvenida"
                 tiempo_inicio_evento = datetime.now()
                 registro_vehiculos[placa_detectada] = {"ingreso": hora_ingreso}
                 placa_en_proceso = placa_detectada
             else:
+                # ventana plazas llenas 
                 lleno_frame = np.zeros((200, 600, 3), dtype=np.uint8)
                 cv2.putText(lleno_frame, "PLAZAS LLENAS", (150, 100), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 255), 3)
                 cv2.putText(lleno_frame, "VUELVA MAS TARDE", (150, 150), cv2.FONT_HERSHEY_SIMPLEX, 1.1, (0, 255, 255), 3)
-                
+
                 mostrar_ventana_temporal("Estado de Parqueadero", lleno_frame, duracion=5)
                 estado_lleno = "lleno"
                 tiempo_inicio_evento = datetime.now()
                 deteccion_activa = False
                 factura_generada = True
 
-    # Procesar salida (se mantiene igual)
+    # Procesar salida 
     if placa_detectada and not factura_generada and modo_operacion == "salida":
         if placa_detectada in registro_vehiculos:
             hora_salida = datetime.now()
             hora_ingreso = registro_vehiculos[placa_detectada]["ingreso"]
             tiempo = hora_salida - hora_ingreso
-            tipo = usuarios.get(placa_detectada, {"tipo": "visitante"})["tipo"] 
-            
+            tipo = usuarios.get(placa_detectada, {"tipo": "visitante"})["tipo"]
+
             plazas[tipo]["disponibles"] += 1
             del registro_vehiculos[placa_detectada]
 
+            # Ventana salida autorizada
             salida_frame = np.zeros((200, 600, 3), dtype=np.uint8)
             cv2.putText(salida_frame, "Salida autorizada", (50, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
             cv2.putText(salida_frame, f"La placa {placa_detectada}", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
             cv2.putText(salida_frame, f"salio a las {hora_salida.strftime('%H:%M:%S')}", (50, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
             cv2.putText(salida_frame, f"Tiempo total: {str(tiempo).split('.')[0]}", (50, 180), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
-            
+
             mostrar_ventana_temporal("Salida de Vehiculo", salida_frame, duracion=5)
 
             plazas_frame_salida = np.zeros((200, 600, 3), dtype=np.uint8)
@@ -317,17 +339,6 @@ while True:
             factura_generada = True
             placa_en_proceso = None
             placa_detectada = ""
-        else:
-            advertencia = np.zeros((200, 600, 3), dtype=np.uint8)
-            cv2.putText(advertencia, "PLACA NO REGISTRADA", (100, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-            cv2.putText(advertencia, "Contacte a seguridad", (100, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
-            
-            mostrar_ventana_temporal("Advertencia", advertencia, duracion=5)
-            estado_advertencia = "espera"
-            tiempo_inicio_evento = datetime.now()
-            deteccion_activa = False
-            factura_generada = True 
-            placa_detectada = ""
 
     # Actualizar ventanas y mostrar cámara
     actualizar_ventanas_temporales()
@@ -338,4 +349,3 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
-
