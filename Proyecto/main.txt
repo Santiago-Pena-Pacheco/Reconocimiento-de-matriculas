@@ -64,4 +64,25 @@ tiempo_inicio_evento = None
 deteccion_activa = True
 ventanas_temporales = {}
 Ctexto = ""
+factura_frame = None
+plazas_frame = None
+plazas_frame_salida = None
 
+def mostrar_ventana_temporal(nombre, imagen, duracion=5):
+    ventanas_temporales[nombre] = {
+        "imagen": imagen,
+        "inicio": datetime.now(),
+        "duracion": duracion,
+        "mostrada": False
+    }
+
+def actualizar_ventanas_temporales():
+    ahora = datetime.now()
+    ventanas_a_cerrar = []
+    for nombre, datos in ventanas_temporales.items():
+        if (ahora - datos["inicio"]).total_seconds() < datos["duracion"]:
+            cv2.imshow(nombre, datos["imagen"])
+            datos["mostrada"] = True
+        else:
+            if datos["mostrada"]:
+                ventanas_a_cerrar.append(nombre)
